@@ -35,3 +35,5 @@ Use o comando Artisan abaixo para gerar o controller relacionado a Series:
 ```bash
 php artisan make:controller SeriesController
 ```
+
+Padrão Post redirect get
