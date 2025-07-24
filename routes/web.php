@@ -29,15 +29,21 @@ Route::resource('/series', SeriesController::class)
 // Route::delete("/series/destroy/{id}", [SeriesController::class, "destroy"])->name("series.destroy");
 //Route::post("/series/destroy/{id}", [SeriesController::class, "destroy"])->name("series.destroy");
 
-Route::get("/series/{series}/series", [SeasonsController::class, "index"])->name("seasons.index")->middleware(Authenticator::class);
+Route::middleware("authenticator")->group(function () {
+    Route::get("/series/{series}/seasons", [SeasonsController::class, "index"])->name("seasons.index");
 
-Route::get("/seasons/{season}/episodes", [EpisodesController::class, "index"])->name("episodes.index")->middleware(Authenticator::class);
-Route::post("/seasons/{season}/episodes", [EpisodesController::class, "update"])->name("episodes.update")->middleware(Authenticator::class);
+    Route::get("/seasons/{season}/episodes", [EpisodesController::class, "index"])->name("episodes.index");
+    Route::post("/seasons/{season}/episodes", [EpisodesController::class, "update"])->name("episodes.update");
 
+    Route::get('/logout', [LoginController::class, 'destroy'])->name('logout');
+});
 
-Route::get('/login', [LoginController::class, 'index'])->name('login');
-Route::post('/login', [LoginController::class, 'store'])->name('signin');
-Route::get('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware(Authenticator::class);
+Route::controller(LoginController::class)->group(function () {
+    Route::get('/login', 'index')->name('login');
+    Route::post('/login', 'store')->name('signin');
+});
 
-Route::get('/user', [UsersController::class, 'create'])->name('users.create');
-Route::post('/user', [UsersController::class, 'store'])->name('users.store');
+Route::controller(UsersController::class)->group(function () {
+    Route::get('/user', 'create')->name('users.create');
+    Route::post('/user', 'store')->name('users.store');
+});
